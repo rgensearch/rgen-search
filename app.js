@@ -205,7 +205,13 @@ form.addEventListener("submit", async event => {
 
     const data = await response.json();
     const papers = data.message?.items || [];
-
+papers.forEach((paper) => {
+  if (paper.abstract) {
+    const doc = document.createElement("div");
+    doc.innerHTML = paper.abstract;
+    paper.abstract = doc.textContent || "";
+  }
+});
     status.textContent =
       `Found ${papers.length} publication records for "${topic}". ` +
       `Selected level: ${level}.`;
