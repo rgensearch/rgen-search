@@ -195,7 +195,7 @@ form.addEventListener("submit", async event => {
     const apiURL =
       "https://api.crossref.org/works?query=" +
       encodeURIComponent(topic) +
-      "&rows=10";
+      "&rows=25";
 
     const response = await fetch(apiURL);
 
