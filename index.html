@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#071A33">
+  <meta name="description" content="RGen Search — Search • Research • Results">
+  <link rel="manifest" href="manifest.json">
+  <title>RGen Search — Search • Research • Results</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="#">
+      <span class="brand-mark" aria-label="RG logo">
+        <span class="r">R</span><span class="g">G</span><span class="lens"></span>
+      </span>
+      <span>
+        <strong>RGen Search</strong>
+        <small>Search • Research • Results</small>
+      </span>
+    </a>
+    <nav class="desktop-nav">
+      <a href="#research">Research</a>
+      <a href="#create">Create</a>
+      <a href="#learn">Learn & Play</a>
+    </nav>
+    <button class="ghost-btn" id="signInBtn">Sign in</button>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+  </header>
+
+  <main>
+    <section class="hero" id="research">
+      <div class="hero-copy">
+        <div class="eyebrow">🔬 AI-powered research workspace</div>
+        <h1>Turn research into <span>knowledge.</span></h1>
+        <p>Search reliable research, understand complex topics, create study materials, and learn through topic-based games — all in one place.</p>
+
+        <form class="search-card" id="researchForm">
+          <div class="search-row">
+            <span class="search-icon">⌕</span>
+            <input id="topicInput" autocomplete="off" placeholder="What do you want to research?" value="">
+            <button type="submit" class="primary-btn">✨ Start Research</button>
+          </div>
+          <div class="search-options">
+            <label>Level
+              <select id="level">
+                <option>School</option>
+                <option>Undergraduate</option>
+                <option selected>MSc</option>
+                <option>PhD</option>
+                <option>Researcher</option>
+              </select>
+            </label>
+            <span class="privacy-note">Free core tools • Sources shown with results</span>
+          </div>
+        </form>
+
+        <div class="chips">
+          <button data-topic="Cyclic electron transfer in photosynthesis">Cyclic electron transfer</button>
+          <button data-topic="CRISPR gene editing">CRISPR gene editing</button>
+          <button data-topic="Plant tissue culture">Plant tissue culture</button>
+          <button data-topic="Climate change and plants">Climate change & plants</button>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="orb"></div>
+        <div class="research-card floating">
+          <div class="mini-top"><span class="dot"></span> Research workspace</div>
+          <h3>One topic. Everything connected.</h3>
+          <div class="progress"><span></span></div>
+          <div class="mini-grid">
+            <div>🔎<b>Search</b><small>Sources</small></div>
+            <div>🧠<b>Understand</b><small>AI study</small></div>
+            <div>🖥️<b>Create</b><small>PPT / DOC</small></div>
+            <div>🎮<b>Learn</b><small>Games</small></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="create">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Everything from one search</span>
+          <h2>Research → Understand → Create</h2>
+        </div>
+        <p>Choose what you need after researching a topic. Your work stays connected.</p>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <span class="icon">🔎</span><h3>Research</h3>
+          <p>Find relevant papers, sources, key findings and references.</p><button>Explore Research →</button>
+        </article>
+        <article class="feature-card">
+          <span class="icon">🧠</span><h3>Understand</h3>
+          <p>Move from simple explanations to MSc, advanced and research-level depth.</p><button>Open Study Mode →</button>
+        </article>
+        <article class="feature-card">
+          <span class="icon">🖥️</span><h3>Create</h3>
+          <p>Turn your research into PPT, DOC, PDF, notes and structured reports.</p><button>Open Creator →</button>
+        </article>
+        <article class="feature-card">
+          <span class="icon">🖼️</span><h3>Visualize</h3>
+          <p>Create scientific diagrams, flowcharts, concept maps and PNG visuals.</p><button>Make a Visual →</button>
+        </article>
+      </div>
+    </section>
+
+    <section class="learn-section" id="learn">
+      <div class="learn-copy">
+        <span class="eyebrow">Learn & Play</span>
+        <h2>Make every research topic playable.</h2>
+        <p>RGen can turn the same topic you studied into quizzes, flashcards, matching challenges and diagram games.</p>
+        <div class="points-pill">⭐ Earn RGen Points by learning</div>
+      </div>
+      <div class="game-grid">
+        <div class="game-card"><span>🧠</span><b>Quick Quiz</b><small>Test your understanding</small></div>
+        <div class="game-card"><span>🔗</span><b>Match It</b><small>Connect concepts</small></div>
+        <div class="game-card"><span>🧩</span><b>Arrange</b><small>Order the process</small></div>
+        <div class="game-card"><span>🔬</span><b>Identify</b><small>Recognize diagrams</small></div>
+      </div>
+    </section>
+
+    <section class="section how">
+      <div class="section-heading">
+        <div><span class="eyebrow">The RGen method</span><h2>Search. Research. Results.</h2></div>
+      </div>
+      <div class="steps">
+        <div><span>01</span><h3>Search</h3><p>Enter a topic and choose your academic level.</p></div>
+        <div><span>02</span><h3>Verify</h3><p>Separate retrieved evidence from AI synthesis.</p></div>
+        <div><span>03</span><h3>Understand</h3><p>Learn the topic at the depth you need.</p></div>
+        <div><span>04</span><h3>Create & Play</h3><p>Make study materials and reinforce learning.</p></div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div><span class="eyebrow">Built for learners & researchers</span>
+      <h2>Start with one question.</h2>
+      <p>RGen Search is designed to make serious research easier to explore and easier to learn.</p>
+      <button class="primary-btn" id="ctaBtn">✨ Start Researching</button></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-brand"><b>RG</b><span>RGen Search</span></div>
+    <span>Search • Research • Results</span>
+    <span>© 2026 RGen Search</span>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
