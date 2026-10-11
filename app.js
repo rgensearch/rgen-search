@@ -42,15 +42,6 @@ document.getElementById("menuBtn").addEventListener("click", ()=>{
 if("serviceWorker" in navigator){
   window.addEventListener("load", ()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 }
-const toast = document.getElementById("toast");
-const input = document.getElementById("topicInput");
-const form = document.getElementById("researchForm");
-
-function showToast(message) {
-  toast.textContent = message;
-  toast.classList.add("show");
-  setTimeout(() => toast.classList.remove("show"), 2600);
-}
 
 // Create a section for real research results
 const resultsSection = document.createElement("section");
