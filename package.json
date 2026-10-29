@@ -1,0 +1,1 @@
+{"name":"rgen-search-upgrade","version":"2.0.0","private":true,"type":"module","description":"RGen Search free-first research and study workspace for Vercel","scripts":{"start":"vercel dev"}}

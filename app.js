@@ -1,358 +1,41 @@
-const toast = document.getElementById("toast");
-const input = document.getElementById("topicInput");
-const form = document.getElementById("researchForm");
-
-function showToast(message){
-  toast.textContent = message;
-  toast.classList.add("show");
-  setTimeout(()=>toast.classList.remove("show"), 2600);
-}
-
-document.querySelectorAll("[data-topic]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    input.value = btn.dataset.topic;
-    input.focus();
-    showToast("Topic added — choose your level and start research.");
-  });
-});
-
-
-form.addEventListener("submit", async e => {
-  e.preventDefault();
-
-  const topic = input.value.trim();
-  const level = document.getElementById("level").value;
-
-  if (!topic) {
-    showToast("Enter a research topic first.");
-    input.focus();
-    return;
-  }
-
-  localStorage.setItem("rgen_last_topic", topic);
-  localStorage.setItem("rgen_level", level);
-
-  // Keep the original prototype message for reference:
-  // showToast(`RGen prototype ready for: ${topic} (${level})`);
-
-  resultsSection.style.display = "block";
-  const status = document.getElementById("resultsStatus");
-  const list = document.getElementById("resultsList");
-
-  status.textContent = "Searching Crossref research publications...";
-  list.replaceChildren();
-  resultsSection.scrollIntoView({ behavior: "smooth" });
-
-  try {
-    const url =
-      "https://api.crossref.org/works?query=" +
-      encodeURIComponent(topic) +
-      "&rows=10";
-
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error("Research search request failed");
-    }
-
-    const data = await response.json();
-    const papers = data.message?.items || [];
-
-    if (papers.length === 0) {
-      status.textContent = "No publications found. Try another topic.";
-      return;
-    }
-
-    status.textContent =
-      `Found ${papers.length} publications for "${topic}".`;
-
-    papers.forEach(paper => {
-      const card = document.createElement("article");
-      card.className = "rgen-paper";
-
-      const heading = document.createElement("h3");
-      heading.textContent = paper.title?.[0] || "Title unavailable";
-      card.appendChild(heading);
-
-      const authors = (paper.author || [])
-        .map(a => [a.given, a.family].filter(Boolean).join(" "))
-        .filter(Boolean)
-        .join(", ");
-
-      const authorLine = document.createElement("p");
-      authorLine.textContent = "Authors: " + (authors || "Not listed");
-      card.appendChild(authorLine);
-
-      const year =
-        paper.published?.["date-parts"]?.[0]?.[0] ||
-        paper.issued?.["date-parts"]?.[0]?.[0] ||
-        "Not listed";
-
-      const yearLine = document.createElement("p");
-      yearLine.textContent = "Year: " + year;
-      card.appendChild(yearLine);
-
-      const journal = paper["container-title"]?.[0];
-
-      if (journal) {
-        const journalLine = document.createElement("p");
-        journalLine.textContent = "Journal: " + journal;
-        card.appendChild(journalLine);
-      }
-
-      const doi = paper.DOI;
-      const linkUrl = doi
-        ? "https://doi.org/" + doi
-        : paper.URL;
-
-      if (linkUrl) {
-        const link = document.createElement("a");
-        link.href = linkUrl;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        link.textContent = "Open publication";
-        card.appendChild(link);
-      }
-
-      list.appendChild(card);
-    });
-
-  } catch (error) {
-    console.error("Crossref search error:", error);
-    status.textContent =
-      "Search failed. Please check your internet connection and try again.";
-  }
-});
-
-  document.getElementById("research").scrollIntoView({behavior:"smooth"});
-  setTimeout(()=>input.focus(), 500);
-});
-
-document.getElementById("signInBtn").addEventListener("click", ()=>{
-  showToast("Accounts will be added in the next build.");
-});
-
-document.getElementById("menuBtn").addEventListener("click", ()=>{
-  showToast("Mobile navigation will be added in the next build.");
-});
-
-if("serviceWorker" in navigator){
-  window.addEventListener("load", ()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
-}
-
-// Create a section for real research results
-const resultsSection = document.createElement("section");
-resultsSection.id = "researchResults";
-resultsSection.style.cssText = "display:none; padding:24px 0;";
-
-resultsSection.innerHTML = `
-  <h2>Research Results</h2>
-  <p id="resultsStatus" role="status"></p>
-  <div id="resultsList"></div>
-`;
-
-document.getElementById("research").after(resultsSection);
-
-// Add simple styling without changing the existing website theme
-const style = document.createElement("style");
-style.textContent = `
-  #resultsList {
-    display: grid;
-    gap: 16px;
-    margin-top: 18px;
-  }
-  .rgen-paper {
-    padding: 18px;
-    border: 1px solid #dbe3ee;
-    border-radius: 12px;
-    background: white;
-    color: #10213a;
-    overflow-wrap: anywhere;
-  }
-  .rgen-paper h3 {
-    margin-top: 0;
-    line-height: 1.5;
-  }
-  .rgen-paper a {
-    color: #087eae;
-  }
-`;
-document.head.appendChild(style);
-
-function addText(parent, tag, value) {
-  const element = document.createElement(tag);
-  element.textContent = value;
-  parent.appendChild(element);
-  return element;
-}
-
-function getPublicationYear(item) {
-  const dates = [
-    item.published,
-    item["published-print"],
-    item["published-online"],
-    item.issued
-  ];
-
-  for (const date of dates) {
-    const year = date?.["date-parts"]?.[0]?.[0];
-    if (year) return String(year);
-  }
-
-  return "Not listed";
-}
-
-function displayPapers(items) {
-  const list = document.getElementById("resultsList");
-  list.replaceChildren();
-
-  if (items.length === 0) {
-    addText(list, "p", "No publications found. Try different keywords.");
-    return;
-  }
-
-  items.forEach(item => {
-    const card = document.createElement("article");
-    card.className = "rgen-paper";
-
-    addText(
-      card,
-      "h3",
-      item.title?.[0] || "Title not available"
-    );
-
-    const authors = (item.author || [])
-      .map(author =>
-        [author.given, author.family].filter(Boolean).join(" ")
-      )
-      .filter(Boolean);
-
-    addText(
-      card,
-      "p",
-      "Authors: " + (authors.join(", ") || "Not listed")
-    );
-
-    addText(card, "p", "Year: " + getPublicationYear(item));
-
-    const journal = item["container-title"]?.[0];
-    if (journal) {
-      addText(card, "p", "Journal: " + journal);
-    }
-
-    if (item.DOI) {
-      const link = document.createElement("a");
-      link.href = "https://doi.org/" + item.DOI;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.textContent = "View publication / DOI ↗";
-      card.appendChild(link);
-    } else if (item.URL) {
-      const link = document.createElement("a");
-      link.href = item.URL;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.textContent = "Open publication ↗";
-      card.appendChild(link);
-    } else {
-      addText(card, "p", "Publication link not available.");
-    }
-
-    list.appendChild(card);
-  });
-}
-
-// Connect the form to the Crossref API
-form.addEventListener("submit", async event => {
-  event.preventDefault();
-
-  const topic = input.value.trim();
-  const level = document.getElementById("level").value;
-  const status = document.getElementById("resultsStatus");
-  const list = document.getElementById("resultsList");
-  const button = form.querySelector('button[type="submit"]');
-
-  if (!topic) {
-    showToast("Enter a research topic first.");
-    input.focus();
-    return;
-  }
-
-  localStorage.setItem("rgen_last_topic", topic);
-  localStorage.setItem("rgen_level", level);
-
-  resultsSection.style.display = "block";
-  status.textContent = `Searching publications for "${topic}"...`;
-  list.replaceChildren();
-  resultsSection.scrollIntoView({ behavior: "smooth" });
-
-  if (button) button.disabled = true;
-
-  try {
-    const apiURL =
-      "https://api.crossref.org/works?query=" +
-      encodeURIComponent(topic) +
-      "&rows=25";
-
-    const response = await fetch(apiURL);
-
-    if (!response.ok) {
-      throw new Error("Crossref request failed: " + response.status);
-    }
-
-    const data = await response.json();
-    const papers = data.message?.items || [];
-papers.forEach((paper) => {
-  if (paper.abstract) {
-    const doc = document.createElement("div");
-    doc.innerHTML = paper.abstract;
-    paper.abstract = doc.textContent || "";
-  }
-});
-    status.textContent =
-      `Found ${papers.length} publication records for "${topic}". ` +
-      `Selected level: ${level}.`;
-
-    displayPapers(papers);
-  } catch (error) {
-    console.error("RGen Search error:", error);
-    status.textContent =
-      "Research search failed. Check your internet connection and try again.";
-  } finally {
-    if (button) button.disabled = false;
-  }
-});
-
-// Topic suggestion buttons
-document.querySelectorAll("[data-topic]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    input.value = btn.dataset.topic;
-    input.focus();
-    showToast("Topic added — choose your level and start research.");
-  });
-});
-
-// Homepage buttons
-document.getElementById("ctaBtn").addEventListener("click", () => {
-  document.getElementById("research").scrollIntoView({
-    behavior: "smooth"
-  });
-  setTimeout(() => input.focus(), 500);
-});
-
-document.getElementById("signInBtn").addEventListener("click", () => {
-  showToast("Accounts will be added in a future build.");
-});
-
-document.getElementById("menuBtn").addEventListener("click", () => {
-  showToast("Mobile navigation will be added in a future build.");
-});
-
-// Register the service worker
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("sw.js")
-      .catch(error => console.error("Service worker error:", error));
-  });
-}
+'use strict';
+const $ = (s) => document.querySelector(s);
+const STORE = {topics:'rgen_topics_v2',notes:'rgen_notes_v2',cards:'rgen_cards_v2',points:'rgen_points_v2',theme:'rgen_theme_v2'};
+const read = (key, fallback) => { try { const v=JSON.parse(localStorage.getItem(key)); return v ?? fallback; } catch { return fallback; } };
+const write = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+let topics=read(STORE.topics,[]), notes=read(STORE.notes,[]), cards=read(STORE.cards,[]), points=read(STORE.points,0), currentCard=0, cardFlipped=false, quizIndex=0, quizScore=0, quizAnswered=false, currentExplanation='';
+const quiz=[
+ {q:'Which organelle is the main site of photosynthesis in plant cells?',o:['Mitochondrion','Chloroplast','Golgi apparatus','Nucleus'],a:1,e:'Chloroplasts contain chlorophyll and carry out photosynthesis.'},
+ {q:'What is the basic structural unit of DNA?',o:['Amino acid','Fatty acid','Nucleotide','Glucose'],a:2,e:'DNA is made from nucleotide units containing sugar, phosphate and a nitrogenous base.'},
+ {q:'Which process converts atmospheric nitrogen into forms some organisms can use?',o:['Transpiration','Nitrogen fixation','Photolysis','Fermentation'],a:1,e:'Nitrogen-fixing microbes convert nitrogen gas into biologically usable nitrogen compounds.'},
+ {q:'Which instrument is commonly used to observe cells?',o:['Telescope','Microscope','Barometer','Spectrometer only'],a:1,e:'A microscope magnifies small structures so their details can be observed.'},
+ {q:'In a scientific paper, what does DOI usually provide?',o:['A stable digital identifier','A laboratory temperature','A species family','A type of microscope'],a:0,e:'A DOI is a persistent identifier for a digital object, often a research publication.'}
+];
+function escapeHTML(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function toast(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),2600);}
+function earn(n){points+=n;write(STORE.points,points);renderPoints();}
+function renderPoints(){$('#pointsTotal').textContent=points;}
+function saveTopic(topic){const clean=topic.trim();if(!clean)return;if(!topics.some(t=>t.toLowerCase()===clean.toLowerCase())){topics.unshift(clean);topics=topics.slice(0,40);write(STORE.topics,topics);renderTopics();earn(1);}}
+function renderTopics(){const ul=$('#savedTopics');ul.innerHTML='';if(!topics.length){ul.innerHTML='<li class="muted">Your saved topics will appear here.</li>';return;}topics.forEach(t=>{const li=document.createElement('li');const b=document.createElement('button');b.className='text-btn';b.textContent='Search';b.addEventListener('click',()=>{$('#topicInput').value=t;$('#researchForm').requestSubmit();});li.append(document.createTextNode(t+' '),b);ul.append(li);});}
+function renderNotes(){const ul=$('#savedNotes');ul.innerHTML='';if(!notes.length){ul.innerHTML='<li class="muted">Your notes will appear here.</li>';return;}notes.forEach((n,i)=>{const li=document.createElement('li');const b=document.createElement('button');b.className='text-btn';b.textContent='Open';b.addEventListener('click',()=>{ $('#notesTitle').value=n.title;$('#notesBody').value=n.body;$('#notesStatus').textContent='Loaded note for editing. Saving creates an updated note.';});li.append(document.createTextNode(n.title+' '),b);ul.append(li);});}
+function paperCard(p){const title=escapeHTML(p.title||'Untitled publication'), authors=escapeHTML((p.authors||[]).slice(0,5).join(', ')||'Author information unavailable'), year=escapeHTML(p.year||'Year unavailable'), journal=escapeHTML(p.journal||'Journal unavailable'), source=escapeHTML(p.source||'Research'), url=/^https:\/\//i.test(p.url||'')?p.url:'#';const article=document.createElement('article');article.className='paper-card';article.innerHTML=`<div class="paper-meta"><span class="pill">${source}</span><span class="pill">${year}</span></div><h3><a href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">${title}</a></h3><p>${authors}</p><p><b>Journal:</b> ${journal}</p>${p.doi?`<p><b>DOI:</b> ${escapeHTML(p.doi)}</p>`:''}${p.abstract?`<details><summary>Available abstract / summary</summary><p>${escapeHTML(p.abstract).slice(0,1300)}</p></details>`:''}<div class="paper-actions"><a class="secondary-btn" href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">Open source ↗</a><button class="secondary-btn save-paper" type="button">Save topic</button></div>`;article.querySelector('.save-paper').addEventListener('click',()=>{saveTopic($('#topicInput').value);toast('Topic saved to your workspace.');});return article;}
+async function searchResearch(event){event.preventDefault();const topic=$('#topicInput').value.trim();const level=$('#levelSelect').value;
+  // Preserved legacy prototype-toast template for compatibility: showToast(`RGen prototype ready for: ${topic} (${level})`);
+  if(!topic)return;const button=$('#searchButton'), results=$('#results'), status=$('#searchStatus');button.disabled=true;results.innerHTML='<div class="empty-state">Searching scholarly sources…</div>';status.textContent='Searching Crossref / PubMed. This may take a few seconds.';saveTopic(topic);try{const params=new URLSearchParams({q:topic,source:$('#sourceSelect').value,sort:$('#sortSelect').value});const response=await fetch('/api/research?'+params.toString(),{headers:{Accept:'application/json'}});const data=await response.json();if(!response.ok)throw new Error(data.error||'Research service returned an error.');results.innerHTML='';if(!data.results?.length){results.innerHTML='<div class="empty-state">No records found. Try shorter or different keywords.</div>';}else data.results.forEach(p=>results.append(paperCard(p)));status.textContent=`Found ${data.results?.length||0} records for “${topic}”. Source: ${data.sources?.join(', ')||'public scholarly APIs'}. Verify publication details at the original source.`;earn(1);}catch(err){console.error('RGen research error:',err);results.innerHTML='<div class="empty-state">Search is temporarily unavailable. Check your internet connection and try again. You can still use the notes, flashcards and quiz tools.</div>';status.textContent=err.message||'Search failed. Please try again.';}finally{button.disabled=false;}}
+$('#researchForm').addEventListener('submit',searchResearch);
+document.querySelectorAll('[data-topic]').forEach(b=>b.addEventListener('click',()=>{$('#topicInput').value=b.dataset.topic;$('#researchForm').requestSubmit();}));
+$('#explainForm').addEventListener('submit',async e=>{e.preventDefault();const topic=$('#explainTopic').value.trim(), level=$('#explainLevel').value, out=$('#explanationOutput');if(!topic)return;out.textContent='Preparing explanation…';try{const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({topic,level})});const d=await r.json();if(!r.ok)throw new Error(d.error||'AI is not configured yet.');currentExplanation=d.answer||'No answer returned.';out.textContent=currentExplanation;earn(1);}catch(err){currentExplanation='AI explanation is not active yet. To keep this feature secure, configure an AI provider key as a private Vercel environment variable; never paste it into app.js or GitHub. For now, try the research search to find published papers, then use the Notes Builder to write your own explanation.\n\nTopic: '+topic+'\nRequested style: '+level+'\n\nSuggested study structure:\n1. Definition\n2. Main components / types\n3. Mechanism or steps\n4. Importance and applications\n5. Example\n6. Limitations or open questions';out.textContent=currentExplanation;toast('AI is not configured; showing a study outline instead.');}});
+$('#copyExplanation').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(currentExplanation||$('#explanationOutput').innerText);toast('Explanation copied.');}catch{toast('Copy is not available in this browser.');}});
+$('#notesForm').addEventListener('submit',e=>{e.preventDefault();const title=$('#notesTitle').value.trim(),body=$('#notesBody').value.trim();if(!title||!body)return;const old=notes.findIndex(n=>n.title.toLowerCase()===title.toLowerCase());const item={title,body,updated:new Date().toISOString()};if(old>=0)notes[old]=item;else notes.unshift(item);notes=notes.slice(0,100);write(STORE.notes,notes);renderNotes();$('#notesStatus').textContent='Saved on this browser.';earn(2);toast('Notes saved.');});
+$('#downloadNotes').addEventListener('click',()=>{const title=$('#notesTitle').value.trim()||'RGen notes',body=$('#notesBody').value;if(!body.trim()){toast('Write some notes first.');return;}downloadFile(title.replace(/[^a-z0-9-_ ]/gi,'').replace(/\s+/g,'_')+'.txt',title+'\n'+'='.repeat(Math.min(title.length,60))+'\n\n'+body,'text/plain;charset=utf-8');});
+function downloadFile(name,content,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();URL.revokeObjectURL(url);}
+function renderCard(){const card=cards[currentCard];$('#flashText').textContent=card?(cardFlipped?card.answer:card.question):'Your question will appear here.';$('#flashHint').textContent=card?(cardFlipped?'Answer / back':'Question / front'):'Add a card to start revising.';$('#cardCount').textContent=cards.length?`Card ${currentCard+1} of ${cards.length}`:'No cards saved yet.';}
+$('#addCard').addEventListener('click',()=>{const question=$('#cardQuestion').value.trim(),answer=$('#cardAnswer').value.trim();if(!question||!answer){toast('Enter both a question and an answer.');return;}cards.push({question,answer});write(STORE.cards,cards);currentCard=cards.length-1;cardFlipped=false;renderCard();$('#cardQuestion').value='';$('#cardAnswer').value='';earn(1);toast('Flashcard added.');});
+$('#flipCard').addEventListener('click',()=>{if(!cards.length)return;cardFlipped=!cardFlipped;renderCard();});$('#nextCard').addEventListener('click',()=>{if(!cards.length)return;currentCard=(currentCard+1)%cards.length;cardFlipped=false;renderCard();});$('#flashcard').addEventListener('click',()=>{if(cards.length){cardFlipped=!cardFlipped;renderCard();}});
+function renderQuiz(){const q=quiz[quizIndex%quiz.length];quizAnswered=false;$('#quizQuestion').textContent=`${quizIndex+1}. ${q.q}`;$('#quizOptions').innerHTML='';q.o.forEach((option,i)=>{const b=document.createElement('button');b.className='quiz-option';b.textContent=option;b.addEventListener('click',()=>{if(quizAnswered)return;quizAnswered=true;const correct=i===q.a;b.classList.add(correct?'correct':'wrong');if(!correct)$('#quizOptions').children[q.a].classList.add('correct');$('#quizFeedback').textContent=(correct?'Correct! ':'Not quite. ')+q.e;if(correct){quizScore++;earn(1);}$('#quizScore').textContent=`Score: ${quizScore}`;});$('#quizOptions').append(b);});$('#quizFeedback').textContent='Choose one answer.';}
+$('#nextQuiz').addEventListener('click',()=>{quizIndex=(quizIndex+1)%quiz.length;renderQuiz();});
+$('#clearTopics').addEventListener('click',()=>{if(confirm('Clear saved research topics on this browser?')){topics=[];write(STORE.topics,topics);renderTopics();}});$('#clearNotes').addEventListener('click',()=>{if(confirm('Delete all saved notes on this browser?')){notes=[];write(STORE.notes,notes);renderNotes();}});$('#resetPoints').addEventListener('click',()=>{if(confirm('Reset your local learning points?')){points=0;write(STORE.points,points);renderPoints();}});
+$('#exportWorkspace').addEventListener('click',()=>{const payload={exportedAt:new Date().toISOString(),topics,notes,flashcards:cards,points};downloadFile('rgen-workspace.json',JSON.stringify(payload,null,2),'application/json');});
+$('#themeToggle').addEventListener('click',()=>{const dark=!document.body.classList.contains('dark');document.body.classList.toggle('dark',dark);localStorage.setItem(STORE.theme,dark?'dark':'light');});
+$('#year').textContent=new Date().getFullYear();if(localStorage.getItem(STORE.theme)==='dark')document.body.classList.add('dark');renderTopics();renderNotes();renderPoints();renderCard();renderQuiz();
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(e=>console.info('Service worker not registered:',e)));

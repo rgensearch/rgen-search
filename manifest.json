@@ -1,10 +1,1 @@
-{
-  "name": "RGen Search",
-  "short_name": "RGen",
-  "description": "Search • Research • Results",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#F7FAFD",
-  "theme_color": "#071A33",
-  "icons": []
-}
+{"name":"RGen Search","short_name":"RGen Search","description":"Free-first research discovery and study workspace","start_url":"/","scope":"/","display":"standalone","background_color":"#f7f8f5","theme_color":"#123b32","icons":[]}

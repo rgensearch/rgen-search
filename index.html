@@ -1,155 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#071A33">
-  <meta name="description" content="RGen Search — Search • Research • Results">
-  <link rel="manifest" href="manifest.json">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#123b32"><meta name="description" content="RGen Search — free-first research discovery and study workspace.">
   <title>RGen Search — Search • Research • Results</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json"><link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="nav">
-    <a class="brand" href="#">
-      <span class="brand-mark" aria-label="RG logo">
-        <span class="r">R</span><span class="g">G</span><span class="lens"></span>
-      </span>
-      <span>
-        <strong>RGen Search</strong>
-        <small>Search • Research • Results</small>
-      </span>
-    </a>
-    <nav class="desktop-nav">
-      <a href="#research">Research</a>
-      <a href="#create">Create</a>
-      <a href="#learn">Learn & Play</a>
-    </nav>
-    <button class="ghost-btn" id="signInBtn">Sign in</button>
-    <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
-  </header>
-
-  <main>
-    <section class="hero" id="research">
-      <div class="hero-copy">
-        <div class="eyebrow">🔬 AI-powered research workspace</div>
-        <h1>Turn research into <span>knowledge.</span></h1>
-        <p>Search reliable research, understand complex topics, create study materials, and learn through topic-based games — all in one place.</p>
-
-        <form class="search-card" id="researchForm">
-          <div class="search-row">
-            <span class="search-icon">⌕</span>
-            <input id="topicInput" autocomplete="off" placeholder="What do you want to research?" value="">
-            <button type="submit" class="primary-btn">✨ Start Research</button>
-          </div>
-          <div class="search-options">
-            <label>Level
-              <select id="level">
-                <option>School</option>
-                <option>Undergraduate</option>
-                <option selected>MSc</option>
-                <option>PhD</option>
-                <option>Researcher</option>
-              </select>
-            </label>
-            <span class="privacy-note">Free core tools • Sources shown with results</span>
-          </div>
-        </form>
-
-        <div class="chips">
-          <button data-topic="Cyclic electron transfer in photosynthesis">Cyclic electron transfer</button>
-          <button data-topic="CRISPR gene editing">CRISPR gene editing</button>
-          <button data-topic="Plant tissue culture">Plant tissue culture</button>
-          <button data-topic="Climate change and plants">Climate change & plants</button>
-        </div>
-      </div>
-
-      <div class="hero-visual">
-        <div class="orb"></div>
-        <div class="research-card floating">
-          <div class="mini-top"><span class="dot"></span> Research workspace</div>
-          <h3>One topic. Everything connected.</h3>
-          <div class="progress"><span></span></div>
-          <div class="mini-grid">
-            <div>🔎<b>Search</b><small>Sources</small></div>
-            <div>🧠<b>Understand</b><small>AI study</small></div>
-            <div>🖥️<b>Create</b><small>PPT / DOC</small></div>
-            <div>🎮<b>Learn</b><small>Games</small></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="create">
-      <div class="section-heading">
-        <div>
-          <span class="eyebrow">Everything from one search</span>
-          <h2>Research → Understand → Create</h2>
-        </div>
-        <p>Choose what you need after researching a topic. Your work stays connected.</p>
-      </div>
-      <div class="feature-grid">
-        <article class="feature-card">
-          <span class="icon">🔎</span><h3>Research</h3>
-          <p>Find relevant papers, sources, key findings and references.</p><button>Explore Research →</button>
-        </article>
-        <article class="feature-card">
-          <span class="icon">🧠</span><h3>Understand</h3>
-          <p>Move from simple explanations to MSc, advanced and research-level depth.</p><button>Open Study Mode →</button>
-        </article>
-        <article class="feature-card">
-          <span class="icon">🖥️</span><h3>Create</h3>
-          <p>Turn your research into PPT, DOC, PDF, notes and structured reports.</p><button>Open Creator →</button>
-        </article>
-        <article class="feature-card">
-          <span class="icon">🖼️</span><h3>Visualize</h3>
-          <p>Create scientific diagrams, flowcharts, concept maps and PNG visuals.</p><button>Make a Visual →</button>
-        </article>
-      </div>
-    </section>
-
-    <section class="learn-section" id="learn">
-      <div class="learn-copy">
-        <span class="eyebrow">Learn & Play</span>
-        <h2>Make every research topic playable.</h2>
-        <p>RGen can turn the same topic you studied into quizzes, flashcards, matching challenges and diagram games.</p>
-        <div class="points-pill">⭐ Earn RGen Points by learning</div>
-      </div>
-      <div class="game-grid">
-        <div class="game-card"><span>🧠</span><b>Quick Quiz</b><small>Test your understanding</small></div>
-        <div class="game-card"><span>🔗</span><b>Match It</b><small>Connect concepts</small></div>
-        <div class="game-card"><span>🧩</span><b>Arrange</b><small>Order the process</small></div>
-        <div class="game-card"><span>🔬</span><b>Identify</b><small>Recognize diagrams</small></div>
-      </div>
-    </section>
-
-    <section class="section how">
-      <div class="section-heading">
-        <div><span class="eyebrow">The RGen method</span><h2>Search. Research. Results.</h2></div>
-      </div>
-      <div class="steps">
-        <div><span>01</span><h3>Search</h3><p>Enter a topic and choose your academic level.</p></div>
-        <div><span>02</span><h3>Verify</h3><p>Separate retrieved evidence from AI synthesis.</p></div>
-        <div><span>03</span><h3>Understand</h3><p>Learn the topic at the depth you need.</p></div>
-        <div><span>04</span><h3>Create & Play</h3><p>Make study materials and reinforce learning.</p></div>
-      </div>
-    </section>
-
-    <section class="cta">
-      <div><span class="eyebrow">Built for learners & researchers</span>
-      <h2>Start with one question.</h2>
-      <p>RGen Search is designed to make serious research easier to explore and easier to learn.</p>
-      <button class="primary-btn" id="ctaBtn">✨ Start Researching</button></div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="footer-brand"><b>RG</b><span>RGen Search</span></div>
-    <span>Search • Research • Results</span>
-    <span>© 2026 RGen Search</span>
-  </footer>
-
-  <div class="toast" id="toast"></div>
-  <script src="app.js"></script>
-</body>
-</html>
+<header class="topbar"><a class="brand" href="#home" aria-label="RGen Search home"><span class="brand-mark">R</span><span><b>RGen Search</b><small>Search • Research • Results</small></span></a><nav><a href="#research">Research</a><a href="#study">Study tools</a><a href="#workspace">My workspace</a></nav><button id="themeToggle" class="icon-btn" type="button" aria-label="Toggle theme">◐</button></header>
+<main id="home">
+<section class="hero"><div class="eyebrow">FREE-FIRST RESEARCH WORKSPACE</div><h1>Turn curiosity into <span>clear research.</span></h1><p>Discover scholarly publications, understand difficult topics, and build study notes — in one place.</p><a class="primary-link" href="#research">Start researching ↓</a><div class="hero-note">Research records come from public scholarly services. Always verify details in the original source.</div></section>
+<section id="research" class="section"><div class="section-heading"><div><div class="eyebrow">01 / DISCOVER</div><h2>Research search</h2><p>Search Crossref publication records and PubMed biomedical literature.</p></div></div>
+<form id="researchForm" class="search-panel"><label for="topicInput">What do you want to research?</label><div class="search-row"><input id="topicInput" name="topic" placeholder="e.g., cyclic electron transport in plants" maxlength="180" required><button id="searchButton" class="primary-btn" type="submit">Search papers</button></div><div class="filter-row"><label for="sourceSelect">Source <select id="sourceSelect"><option value="all">All sources</option><option value="crossref">Crossref</option><option value="pubmed">PubMed</option></select></label><label for="levelSelect">Study level <select id="levelSelect"><option>Beginner</option><option selected>MSc / University</option><option>CSIR-NET</option><option>Research</option></select></label><label for="sortSelect">Sort <select id="sortSelect"><option value="relevance">Relevance</option><option value="newest">Newest first</option></select></label></div><div id="searchStatus" class="status" role="status">Ready when you are.</div></form>
+<div class="topic-chips"><span>Try:</span><button type="button" class="chip" data-topic="plant tissue culture">Plant tissue culture</button><button type="button" class="chip" data-topic="cyclic electron transport photosynthesis">Cyclic electron transport</button><button type="button" class="chip" data-topic="CRISPR gene editing">CRISPR gene editing</button><button type="button" class="chip" data-topic="climate change plants">Climate change</button></div>
+<div id="results" class="results-grid" aria-live="polite"></div></section>
+<section id="understand" class="section soft"><div class="section-heading"><div><div class="eyebrow">02 / UNDERSTAND</div><h2>Explain a topic</h2><p>Get a structured study explanation. AI is optional and only works after a provider is configured securely on the server.</p></div></div><div class="two-col"><form id="explainForm" class="tool-card"><label for="explainTopic">Topic</label><textarea id="explainTopic" rows="3" maxlength="5000" placeholder="Write a topic or paste a short question…" required></textarea><label for="explainLevel">Explanation style</label><select id="explainLevel"><option>Simple English</option><option>Hinglish</option><option>MSc Botany level</option><option>Exam answer format</option><option>CSIR-NET revision</option></select><button class="primary-btn" type="submit">Generate explanation</button><p class="tiny">No AI key is included in this website. If AI is not configured, use the study-notes builder below.</p></form><article class="tool-card output-card"><div class="output-head"><h3>Explanation</h3><button id="copyExplanation" class="secondary-btn" type="button">Copy</button></div><div id="explanationOutput" class="output-text">Your explanation will appear here.</div></article></div></section>
+<section id="study" class="section"><div class="section-heading"><div><div class="eyebrow">03 / STUDY</div><h2>Study tools</h2><p>Create your own notes, flashcards and quick quizzes.</p></div></div><div class="three-col"><form id="notesForm" class="tool-card"><h3>Notes builder</h3><label for="notesTitle">Topic / title</label><input id="notesTitle" placeholder="e.g., Plant chaperones" maxlength="160" required><label for="notesBody">Your notes</label><textarea id="notesBody" rows="5" placeholder="Paste or write your notes…" required></textarea><button class="primary-btn" type="submit">Save notes</button><button id="downloadNotes" class="secondary-btn" type="button">Download notes (.txt)</button><div id="notesStatus" class="tiny" role="status"></div></form>
+<div class="tool-card"><h3>Flashcards</h3><p class="muted">Make a quick revision card.</p><label for="cardQuestion">Question / front</label><textarea id="cardQuestion" rows="2" placeholder="What is…?"></textarea><label for="cardAnswer">Answer / back</label><textarea id="cardAnswer" rows="2" placeholder="It is…"></textarea><button id="addCard" class="primary-btn" type="button">Add flashcard</button><div id="flashcard" class="flashcard" tabindex="0"><span class="tiny">CARD PREVIEW</span><strong id="flashText">Your question will appear here.</strong><span id="flashHint" class="muted">Tap “Flip card” to reveal answer.</span></div><div class="button-row"><button id="flipCard" class="secondary-btn" type="button">Flip card</button><button id="nextCard" class="secondary-btn" type="button">Next</button></div><div id="cardCount" class="tiny"></div></div>
+<div class="tool-card"><h3>Quick quiz</h3><p class="muted">Practice with a short general biology quiz.</p><div id="quizQuestion" class="quiz-question"></div><div id="quizOptions" class="quiz-options"></div><div id="quizFeedback" class="tiny" role="status"></div><div class="button-row"><button id="nextQuiz" class="primary-btn" type="button">Next question</button><span id="quizScore" class="muted"></span></div></div></div></section>
+<section id="workspace" class="section soft"><div class="section-heading"><div><div class="eyebrow">04 / YOUR SPACE</div><h2>My workspace</h2><p>Saved locally on this device/browser. This is not cloud sync or an account.</p></div><button id="exportWorkspace" class="secondary-btn" type="button">Export workspace</button></div><div class="workspace-grid"><div class="tool-card"><div class="output-head"><h3>Saved research topics</h3><button id="clearTopics" class="text-btn" type="button">Clear</button></div><ul id="savedTopics" class="saved-list"><li class="muted">Your saved topics will appear here.</li></ul></div><div class="tool-card"><div class="output-head"><h3>Saved notes</h3><button id="clearNotes" class="text-btn" type="button">Clear</button></div><ul id="savedNotes" class="saved-list"><li class="muted">Your notes will appear here.</li></ul></div><div class="tool-card points-card"><div class="eyebrow">RGEN POINTS</div><div id="pointsTotal" class="points-number">0</div><p>Learning points earned on this browser for searching, saving notes and making cards. Points have no cash value.</p><button id="resetPoints" class="text-btn" type="button">Reset points</button></div></div></section>
+<section class="section about"><h2>What works today?</h2><div class="feature-list"><div><b>✓ Free research search</b><p>Crossref and PubMed metadata via a server endpoint.</p></div><div><b>✓ Local study workspace</b><p>Saved topics, notes, flashcards, quiz and points stored in your browser.</p></div><div><b>✓ Secure AI-ready backend</b><p>AI requests go through a server endpoint; secret keys stay out of public frontend code.</p></div><div><b>↗ Future additions</b><p>Sign-in, cross-device sync, collaboration, advanced citation exports and full PPT/PDF generation need extra services or libraries and are not falsely presented as active.</p></div></div></section>
+</main><footer><a class="brand footer-brand" href="#home"><span class="brand-mark">R</span><span><b>RGen Search</b><small>Search • Research • Results</small></span></a><p>Built for learning. Check original sources before citing or submitting academic work.</p><p>© <span id="year"></span> RGen Search prototype</p></footer><div id="toast" class="toast" role="status" aria-live="polite"></div><script src="app.js" defer></script>
+</body></html>
