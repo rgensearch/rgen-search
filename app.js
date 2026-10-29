@@ -16,17 +16,114 @@ document.querySelectorAll("[data-topic]").forEach(btn=>{
   });
 });
 
-form.addEventListener("submit", e=>{
+
+form.addEventListener("submit", async e => {
   e.preventDefault();
+
   const topic = input.value.trim();
   const level = document.getElementById("level").value;
-  if(!topic){ showToast("Enter a research topic first."); input.focus(); return; }
+
+  if (!topic) {
+    showToast("Enter a research topic first.");
+    input.focus();
+    return;
+  }
+
   localStorage.setItem("rgen_last_topic", topic);
   localStorage.setItem("rgen_level", level);
-  showToast(`RGen prototype ready for: ${topic} (${level})`);
+
+  // Keep the original prototype message for reference:
+  // showToast(`RGen prototype ready for: ${topic} (${level})`);
+
+  resultsSection.style.display = "block";
+  const status = document.getElementById("resultsStatus");
+  const list = document.getElementById("resultsList");
+
+  status.textContent = "Searching Crossref research publications...";
+  list.replaceChildren();
+  resultsSection.scrollIntoView({ behavior: "smooth" });
+
+  try {
+    const url =
+      "https://api.crossref.org/works?query=" +
+      encodeURIComponent(topic) +
+      "&rows=10";
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error("Research search request failed");
+    }
+
+    const data = await response.json();
+    const papers = data.message?.items || [];
+
+    if (papers.length === 0) {
+      status.textContent = "No publications found. Try another topic.";
+      return;
+    }
+
+    status.textContent =
+      `Found ${papers.length} publications for "${topic}".`;
+
+    papers.forEach(paper => {
+      const card = document.createElement("article");
+      card.className = "rgen-paper";
+
+      const heading = document.createElement("h3");
+      heading.textContent = paper.title?.[0] || "Title unavailable";
+      card.appendChild(heading);
+
+      const authors = (paper.author || [])
+        .map(a => [a.given, a.family].filter(Boolean).join(" "))
+        .filter(Boolean)
+        .join(", ");
+
+      const authorLine = document.createElement("p");
+      authorLine.textContent = "Authors: " + (authors || "Not listed");
+      card.appendChild(authorLine);
+
+      const year =
+        paper.published?.["date-parts"]?.[0]?.[0] ||
+        paper.issued?.["date-parts"]?.[0]?.[0] ||
+        "Not listed";
+
+      const yearLine = document.createElement("p");
+      yearLine.textContent = "Year: " + year;
+      card.appendChild(yearLine);
+
+      const journal = paper["container-title"]?.[0];
+
+      if (journal) {
+        const journalLine = document.createElement("p");
+        journalLine.textContent = "Journal: " + journal;
+        card.appendChild(journalLine);
+      }
+
+      const doi = paper.DOI;
+      const linkUrl = doi
+        ? "https://doi.org/" + doi
+        : paper.URL;
+
+      if (linkUrl) {
+        const link = document.createElement("a");
+        link.href = linkUrl;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "Open publication";
+        card.appendChild(link);
+      }
+
+      list.appendChild(card);
+    });
+
+  } catch (error) {
+    console.error("Crossref search error:", error);
+    status.textContent =
+      "Search failed. Please check your internet connection and try again.";
+  }
 });
 
-document.getElementById("ctaBtn").addEventListener("click", ()=>{
   document.getElementById("research").scrollIntoView({behavior:"smooth"});
   setTimeout(()=>input.focus(), 500);
 });
