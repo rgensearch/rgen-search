@@ -1,4 +1,3 @@
-
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
 
@@ -9,13 +8,12 @@ export default async function handler(req, res) {
     });
   }
 
-  const apiKey = process.env.AI_API_KEY;
-  const baseUrl = process.env.AI_BASE_URL;
-  const model = process.env.AI_MODEL;
+  const apiKey = process.env.GEMINI_API_KEY;
+  const model = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
 
-  if (!apiKey || !baseUrl || !model) {
+  if (!apiKey) {
     return res.status(503).json({
-      error: "AI is not configured yet. Research search remains available."
+      error: "Gemini is not configured yet. Research search remains available."
     });
   }
 
@@ -30,52 +28,61 @@ export default async function handler(req, res) {
   }
 
   const instructions = {
-    explain: "Explain the topic clearly, step by step, with examples and key terms.",
-    notes: "Create organized study notes with headings, definitions, and examples.",
-    flashcards: "Create 8 study flashcards in numbered Question and Answer format.",
-    quiz: "Create 8 educational multiple-choice questions and provide an answer key at the end."
+    explain: "Explain the topic step by step with clear headings, examples, key terms, and a detailed but easy-to-understand explanation.",
+    notes: "Create detailed study notes with headings, definitions, important points, examples, and a short revision section.",
+    flashcards: "Create 8 numbered study flashcards. Give a clear Question and Answer for each card.",
+    quiz: "Create 8 educational multiple-choice questions with four options each. Give the correct answer and a short explanation in an answer key at the end."
   };
 
   const prompt = instructions[task] || instructions.explain;
 
   try {
-    const endpoint = baseUrl.replace(/\/+$/, "") + "/chat/completions";
+    const response = await fetch(
+      "https://generativelanguage.googleapis.com/v1/interactions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": apiKey
+        },
+        body: JSON.stringify({
+          model,
+          input: `You are RGen Search, a careful educational research assistant.
+Explain in clear, simple language suited to the requested study level.
+Use headings, examples, and enough detail to teach the topic properly.
+Never invent research citations or claim you verified sources unless source data was provided.
+State uncertainty honestly.
 
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model,
-        messages: [
-          {
-            role: "system",
-            content: "You are a careful educational research assistant. Explain at the requested level. Do not invent references or claim you verified sources unless source data was provided. Clearly state uncertainty."
-          },
-          {
-            role: "user",
-            content: `Study level: ${level}\nTask: ${prompt}\nTopic: ${topic}`
-          }
-        ],
-        temperature: 0.4
-      })
-    });
+Study level: ${level}
+Task: ${prompt}
+Topic: ${topic}`,
+          store: false
+        })
+      }
+    );
 
     if (!response.ok) {
-      console.error("AI provider returned status:", response.status);
+      console.error("Gemini API status:", response.status);
       return res.status(502).json({
-        error: "The AI service could not complete the request. Please try again later."
+        error: "Gemini could not complete the request. Check the API key, model access, and free-tier limits."
       });
     }
 
     const data = await response.json();
-    const answer = data.choices?.[0]?.message?.content;
+
+    const answer =
+      data.output_text ||
+      (Array.isArray(data.outputs)
+        ? data.outputs
+            .flatMap(item => item.content || [])
+            .filter(item => item.type === "text")
+            .map(item => item.text || "")
+            .join("\n")
+        : "");
 
     if (typeof answer !== "string" || !answer.trim()) {
       return res.status(502).json({
-        error: "The AI service returned an empty answer."
+        error: "Gemini returned an empty answer."
       });
     }
 
@@ -84,9 +91,9 @@ export default async function handler(req, res) {
       model
     });
   } catch (error) {
-    console.error("AI request failed:", error.message);
+    console.error("Gemini request failed:", error.message);
     return res.status(502).json({
-      error: "Unable to connect to the AI service. Please try again later."
+      error: "Unable to connect to Gemini. Please try again later."
     });
   }
 }
